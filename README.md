@@ -1,26 +1,24 @@
-[![npm (scoped)](https://img.shields.io/npm/v/@walletpass/pass-js.svg)](https://www.npmjs.com/package/@walletpass/pass-js) [![codecov](https://codecov.io/gh/walletpass/pass-js/branch/master/graph/badge.svg)](https://codecov.io/gh/walletpass/pass-js)
-[![Known Vulnerabilities](https://snyk.io/test/github/walletpass/pass-js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/walletpass/pass-js?targetFile=package.json) [![DeepScan grade](https://deepscan.io/api/teams/2667/projects/4302/branches/35050/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=2667&pid=4302&bid=35050) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=walletpass_pass-js&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=walletpass_pass-js) [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest) [![install size](https://packagephobia.now.sh/badge?p=@walletpass/pass-js)](https://packagephobia.now.sh/result?p=@walletpass/pass-js)
-
-
 <img src="https://docs-assets.developer.apple.com/published/c104c9bff0/841b02dd-b78c-4cad-8da4-700761d34e14.png" alt="Apple Wallet logo" width="216" height="216" align="left">
 
-# @walletpass/pass-js
+# @walletpass2/pass-js
 
 <p align="center">A Node.js library for generating Apple Wallet passes with localizations, NFC and web service push updates support. Written in Typescript.</p>
 
 <br><br><br>
 
+# Credits
+
+This project is a fork of https://github.com/tinovyatkin/pass-js and Konstantin Vyatkin [<tino@vtkn.io>] is the original author.
 
 # Installation
 
 Install with `NPM` or `yarn`:
+
 ```sh
-npm install @walletpass/pass-js --save
+npm install @walletpass2/pass-js --save
 
-yarn add @walletpass/pass-js
+yarn add @walletpass2/pass-js
 ```
-
-
 
 # Get your certificates
 
@@ -46,37 +44,38 @@ Start with a template. A template has all the common data fields that will be
 shared between your passes.
 
 ```js
-const { Template } = require("@walletpass/pass-js");
+const { Template } = require('@walletpass2/pass-js');
 
 // Create a Template from local folder, see __test__/resources/passes for examples
 // .load will load all fields from pass.json,
 // as well as all images and com.example.passbook.pem file as key
 // and localization string too
 const template = await Template.load(
-  "./path/to/templateFolder",
-  "secretKeyPasswod"
+  './path/to/templateFolder',
+  'secretKeyPasswod',
 );
 
 // or
 // create a Template from a Buffer with ZIP content
-const s3 = new AWS.S3({ apiVersion: "2006-03-01", region: "us-west-2" });
+const s3 = new AWS.S3({ apiVersion: '2006-03-01', region: 'us-west-2' });
 const s3file = await s3
   .getObject({
-    Bucket: "bucket",
-    Key: "pass-template.zip"
+    Bucket: 'bucket',
+    Key: 'pass-template.zip',
   })
   .promise();
 const template = await Template.fromBuffer(s3file.Body);
 
 // or create it manually
-const template = new Template("coupon", {
-  passTypeIdentifier: "pass.com.example.passbook",
-  teamIdentifier: "MXL",
-  backgroundColor: "red",
-  sharingProhibited: true
+const template = new Template('coupon', {
+  passTypeIdentifier: 'pass.com.example.passbook',
+  teamIdentifier: 'MXL',
+  backgroundColor: 'red',
+  sharingProhibited: true,
 });
-await template.images.add("icon", iconPngFileBuffer)
-                     .add("logo", pathToLogoPNGfile)
+await template.images
+  .add('icon', iconPngFileBuffer)
+  .add('logo', pathToLogoPNGfile);
 ```
 
 The first argument is the pass style (`coupon`, `eventTicket`, etc), and the
@@ -85,8 +84,8 @@ second optional argument has any fields you want to set on the template.
 You can access template fields directly, or from chained accessor methods, e.g:
 
 ```js
-template.passTypeIdentifier = "pass.com.example.passbook";
-template.teamIdentifier = "MXL";
+template.passTypeIdentifier = 'pass.com.example.passbook';
+template.teamIdentifier = 'MXL';
 ```
 
 The following template fields are required:
@@ -102,8 +101,8 @@ In addition, you need to tell the template where to find the key file:
 
 ```js
 await template.loadCertificate(
-  "/etc/passbook/certificate_and_key.pem",
-  "secret"
+  '/etc/passbook/certificate_and_key.pem',
+  'secret',
 );
 // or set them as strings
 template.setCertificate(pemEncodedPassCertificate);
@@ -114,9 +113,9 @@ If you have images that are common to all passes, you may want to specify them o
 
 ```js
 // specify a single image with specific density and localization
-await pass.images.add("icon", iconFilename, "2x", "ru");
+await pass.images.add('icon', iconFilename, '2x', 'ru');
 // load all appropriate images in all densities and localizations
-await template.images.load("./images");
+await template.images.load('./images');
 ```
 
 You can add the image itself or a `Buffer`. Image format is enforced to be **PNG**.
@@ -126,8 +125,8 @@ Alternatively, if you have one directory containing the template file `pass.json
 
 ```js
 const template = await Template.load(
-  "./path/to/templateFolder",
-  "secretKeyPasswod"
+  './path/to/templateFolder',
+  'secretKeyPasswod',
 );
 ```
 
@@ -135,8 +134,8 @@ You can use the options parameter of the template factory functions to set the `
 
 ```js
 const template = await Template.load(
-  "./path/to/templateFolder",
-  "secretKeyPasswod",
+  './path/to/templateFolder',
+  'secretKeyPasswod',
   {
     allowHttp: true,
   },
@@ -149,16 +148,16 @@ To create a new pass from a template:
 
 ```js
 const pass = template.createPass({
-  serialNumber: "123456",
-  description: "20% off"
+  serialNumber: '123456',
+  description: '20% off',
 });
 ```
 
 Just like the template, you can access pass fields directly, e.g:
 
 ```js
-pass.serialNumber = "12345";
-pass.description = "20% off";
+pass.serialNumber = '12345';
+pass.description = '20% off';
 ```
 
 In the JSON specification, structure fields (primary fields, secondary fields,
@@ -169,13 +168,13 @@ To make it easier, you can use methods of standard Map object or `add` that
 will do the logical thing. For example, to add a primary field:
 
 ```js
-pass.primaryFields.add({ key: "time", label: "Time", value: "10:00AM" });
+pass.primaryFields.add({ key: 'time', label: 'Time', value: '10:00AM' });
 ```
 
 To get one or all fields:
 
 ```js
-const dateField = pass.primaryFields.get("date");
+const dateField = pass.primaryFields.get('date');
 for (const [key, { value }] of pass.primaryFields.entries()) {
   // ...
 }
@@ -184,20 +183,27 @@ for (const [key, { value }] of pass.primaryFields.entries()) {
 To remove one or all fields:
 
 ```js
-pass.primaryFields.delete("date");
+pass.primaryFields.delete('date');
 pass.primaryFields.clear();
 ```
 
 Adding images to a pass is the same as adding images to a template (see above).
 
 # Working with Dates
-If you have [dates in your fields](https://developer.apple.com/library/archive/documentation/UserExperience/Reference/PassKit_Bundle/Chapters/FieldDictionary.html#//apple_ref/doc/uid/TP40012026-CH4-SW6) make sure they are in ISO 8601 format with timezone or a `Date` instance. 
- For example:
+
+If you have [dates in your fields](https://developer.apple.com/library/archive/documentation/UserExperience/Reference/PassKit_Bundle/Chapters/FieldDictionary.html#//apple_ref/doc/uid/TP40012026-CH4-SW6) make sure they are in ISO 8601 format with timezone or a `Date` instance.
+For example:
 
 ```js
 const { constants } = require('@destinationstransfers/passkit');
 
-pass.primaryFields.add({ key: "updated", label: "Updated at", value: new Date(), dateStyle: constants.dateTimeFormat.SHORT, timeStyle: constants.dateTimeFormat.SHORT });
+pass.primaryFields.add({
+  key: 'updated',
+  label: 'Updated at',
+  value: new Date(),
+  dateStyle: constants.dateTimeFormat.SHORT,
+  timeStyle: constants.dateTimeFormat.SHORT,
+});
 
 // there is also a helper setDateTime method
 pass.auxiliaryFields.setDateTime(
@@ -227,30 +233,30 @@ await template.load(folderPath);
 // Strings
 
 pass.localizations
-  .add("en-GB", {
-    GATE: "GATE",
-    DEPART: "DEPART",
-    ARRIVE: "ARRIVE",
-    SEAT: "SEAT",
-    PASSENGER: "PASSENGER",
-    FLIGHT: "FLIGHT"
+  .add('en-GB', {
+    GATE: 'GATE',
+    DEPART: 'DEPART',
+    ARRIVE: 'ARRIVE',
+    SEAT: 'SEAT',
+    PASSENGER: 'PASSENGER',
+    FLIGHT: 'FLIGHT',
   })
-  .add("ru", {
-    GATE: "ВЫХОД",
-    DEPART: "ВЫЛЕТ",
-    ARRIVE: "ПРИЛЁТ",
-    SEAT: "МЕСТО",
-    PASSENGER: "ПАССАЖИР",
-    FLIGHT: "РЕЙС"
+  .add('ru', {
+    GATE: 'ВЫХОД',
+    DEPART: 'ВЫЛЕТ',
+    ARRIVE: 'ПРИЛЁТ',
+    SEAT: 'МЕСТО',
+    PASSENGER: 'ПАССАЖИР',
+    FLIGHT: 'РЕЙС',
   });
 
 // Images
 
 await template.images.add(
-  "logo" | "icon" | etc,
+  'logo' | 'icon' | etc,
   imageFilePathOrBufferWithPNGdata,
-  "1x" | "2x" | "3x" | undefined,
-  "ru"
+  '1x' | '2x' | '3x' | undefined,
+  'ru',
 );
 ```
 
@@ -262,7 +268,7 @@ To generate a file:
 
 ```js
 const buf = await pass.asBuffer();
-await fs.writeFile("pathToPass.pass", buf);
+await fs.writeFile('pathToPass.pass', buf);
 ```
 
 You can send the buffer directly to an HTTP server response:
@@ -281,14 +287,9 @@ If the pass file generates without errors but you aren't able to open your pass 
 
 ## Stay in touch
 
-* Author - [Konstantin Vyatkin](https://github.com/tinovyatkin)
-* Email - tino [at] vtkn.io
+- Original Author - [Konstantin Vyatkin](https://github.com/tinovyatkin)
+- Email - tino [at] vtkn.io
 
 ## License
 
-`@walletpass/pass-js` is [MIT licensed](LICENSE).
-
-# Financial Contributors
-
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/walletpass/contribute)]
-
+`@walletpass2/pass-js` is [MIT licensed](LICENSE).
