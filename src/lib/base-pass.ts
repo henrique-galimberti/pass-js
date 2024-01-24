@@ -468,6 +468,22 @@ export class PassBase extends PassStructure {
     this.fields.barcodes = [...v];
   }
 
+  set fidoProfile(v: ApplePass['fidoProfile']) {
+    this.fields.fidoProfile = v;
+  }
+
+  get fidoProfile(): ApplePass['fidoProfile'] {
+    return this.fields.fidoProfile;
+  }
+
+  set issuerBindingData(v: ApplePass['issuerBindingData']) {
+    this.fields.issuerBindingData = v;
+  }
+
+  get issuerBindingData(): ApplePass['issuerBindingData'] {
+    return this.fields.issuerBindingData;
+  }
+
   /**
    * Adds a location where a pass is relevant.
    *

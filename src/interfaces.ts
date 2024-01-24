@@ -195,6 +195,22 @@ export interface PassExpirationKeys {
   voided?: boolean;
 }
 
+export interface PassBindingDataKeys {
+  issuerBindingData?: IssuerBindingData;
+  fidoProfile?: FidoProfile;
+}
+
+export interface IssuerBindingData {
+  issuerBindingData: string;
+  learnMoreURL: string;
+}
+
+export interface FidoProfile {
+  relyingPartyIdentifier: string;
+  accountHash: string;
+  keyHash: string;
+}
+
 /**
  * Information about a location beacon.
  */
@@ -446,6 +462,7 @@ export type ApplePass = PassStandardKeys &
   PassRelevanceKeys &
   PassVisualAppearanceKeys &
   PassWebServiceKeys &
+  PassBindingDataKeys &
   PassStructureFields;
 
   export interface Options {

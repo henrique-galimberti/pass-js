@@ -217,6 +217,13 @@ export const TOP_LEVEL_FIELDS: {
     type: 'string',
     templatable: true,
   },
+  // VAS
+  issuerBindingData: {
+    type: Object,
+  },
+  fidoProfile: {
+    type: Object,
+  },
 };
 
 // Pass structure keys.
